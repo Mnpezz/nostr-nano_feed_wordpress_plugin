@@ -288,15 +288,18 @@ nostrToolsScript.onload = async function() {
                                     
                                     // Look for Nano address in about field or custom fields
                                     if (profile.about) {
-                                        const nanoMatch = profile.about.match(/nano_[123456789abcdefghijkmnopqrstuwxyz]{60}/i);
-                                        if (nanoMatch) {
-                                            profile.nano_address = nanoMatch[0];
+                                        // Match both formats:
+                                        // 1. Standard nano_ address
+                                        // 2. "Nano: nano_" format
+                                        const nanoMatches = profile.about.match(/(?:Nano:\s*)?(nano_[123456789abcdefghijkmnopqrstuwxyz]{60})/i);
+                                        if (nanoMatches) {
+                                            profile.nano_address = nanoMatches[1];
                                         }
                                     }
                                     
                                     // Also check for custom nano field
                                     if (profile.nano) {
-                                        profile.nano_address = profile.nano;
+                                        profile.nano_address = profile.nano.replace(/^Nano:\s*/i, '');
                                     }
                                     
                                     sub.unsub();
